@@ -1,3 +1,4 @@
+using Detached.Mappers.EntityFramework;
 using EasyCaching.InMemory;
 using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.AspNetCore.Builder;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using performance_testing_api.Controllers;
 using performance_testing_api.Data;
@@ -72,17 +74,32 @@ namespace performance_testing_api
             var connectionString = "Data Source=DESKTOP-TERE1H0\\SQLEXPRESS;Initial Catalog=Prtest;User Id=sa;Password=#compaq123";
 
             services.AddDbContextPool<AppDbContext>((serviceProvider, optionsBuilder) =>
-                    optionsBuilder
-                        .UseSqlServer(
-                            connectionString,
-                            sqlServerOptionsBuilder =>
-                            {
-                                sqlServerOptionsBuilder
-                                    .CommandTimeout((int)TimeSpan.FromMinutes(3).TotalSeconds)
-                                    .EnableRetryOnFailure()
-                                    .MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
-                            })
-                        .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>()));
+            {
+                optionsBuilder
+                       .UseSqlServer(
+                           connectionString,
+                           sqlServerOptionsBuilder =>
+                           {
+                               sqlServerOptionsBuilder
+                                   .CommandTimeout((int)TimeSpan.FromMinutes(3).TotalSeconds)
+                                   .EnableRetryOnFailure()
+                                   .MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
+
+
+                           })
+                       .AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>());
+
+                optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .LogTo(Console.WriteLine, LogLevel.Information);
+
+                optionsBuilder.UseDetached();
+            });
+
+
+
+
+
+
 
 
             //services.AddDbContext<AppDbContext>(c =>

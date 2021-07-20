@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Detached.Mappers.EntityFramework;
 using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using performance_testing_api.ApiModel;
 using performance_testing_api.Data;
 using performance_testing_api.Domain;
 using System;
@@ -34,11 +36,20 @@ namespace performance_testing_api.Controllers
             stopwatch.Start();
 
 
-            var res = await AppDbContext.Students
+            var res = await AppDbContext.Project<Student, StudentApiModel>(AppDbContext.Students)
                 .OrderBy(x => x.Id)
                 .Take(9999)
                 .Cacheable()
-                .ToListAsync(cancellationToken);
+                .ToListAsync();
+
+
+
+
+            //var res = await AppDbContext.Students
+            //    .OrderBy(x => x.Id)
+            //    .Take(9999)
+            //    .Cacheable()
+            //    .ToListAsync(cancellationToken);
 
             Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
             return Ok(res);
