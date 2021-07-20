@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31423.177
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "performance-testing", "performance-testing\performance-testing.csproj", "{7D459F11-A19A-4401-B454-CF9779FB74B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "performance-testing-api", "performance-testing-api\performance-testing-api.csproj", "{CFC02893-0943-40C5-A51B-728233146C2D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D459F11-A19A-4401-B454-CF9779FB74B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D459F11-A19A-4401-B454-CF9779FB74B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D459F11-A19A-4401-B454-CF9779FB74B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D459F11-A19A-4401-B454-CF9779FB74B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFC02893-0943-40C5-A51B-728233146C2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC02893-0943-40C5-A51B-728233146C2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC02893-0943-40C5-A51B-728233146C2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC02893-0943-40C5-A51B-728233146C2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5E9322EA-CD96-466F-A576-2340084FCC0A}
+	EndGlobalSection
+EndGlobal
