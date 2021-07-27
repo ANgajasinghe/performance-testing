@@ -13,6 +13,15 @@ using performance_testing_api.Controllers;
 using performance_testing_api.Data;
 using System;
 using System.Reflection;
+using System.Text.Json;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Routing;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
+using Newtonsoft.Json.Serialization;
+using OData.Swagger.Services;
+using performance_testing_api.Domain;
+
 
 namespace performance_testing_api
 {
@@ -29,12 +38,35 @@ namespace performance_testing_api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddOData(o =>
+            {
+                o.AddRouteComponents("odata", GetEdmModel());
+                o.Select();
+                o.Filter();
+                o.Expand();
+                o.Filter();
+                o.OrderBy();
+                o.Count();
+                o.SetMaxTop(20);
+            });
+                
+            //.AddJsonOptions(opt=> opt.JsonSerializerOptions.PropertyNamingPolicy = null );
+            
+            
+            // }).AddNewtonsoftJson(
+            //     options =>
+            //     {
+            //         options.SerializerSettings.DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore;
+            //         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            //         //options.SerializerSettings.ContractResolver = WebApiJsonResolver.Instance;
+            //     });
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "performance_testing_api", Version = "v1" });
             });
 
+          //  services.AddOdataSwaggerSupport();
 
             const string providerName1 = "InMemory1";
 
@@ -71,6 +103,8 @@ namespace performance_testing_api
                 }, providerName1);
             });
 
+
+
             var connectionString = "Data Source=DESKTOP-TERE1H0\\SQLEXPRESS;Initial Catalog=Prtest;User Id=sa;Password=#compaq123";
 
             services.AddDbContextPool<AppDbContext>((serviceProvider, optionsBuilder) =>
@@ -98,6 +132,8 @@ namespace performance_testing_api
 
 
 
+           // services.AddOData();
+
 
 
 
@@ -118,6 +154,10 @@ namespace performance_testing_api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
+            
+           
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -131,10 +171,36 @@ namespace performance_testing_api
 
             app.UseAuthorization();
 
+            
+            // Use odata route debug, /$odata
+          //  app.UseODataRouteDebug();
+
+            // If you want to use /$openapi, enable the middleware.
+            //app.UseODataOpenApi();
+
+            // Add OData /$query middleware
+           // app.UseODataQueryRequest();
+
+            // Add the OData Batch middleware to support OData $Batch
+           // app.UseODataBatching();
+            
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            
+            
+            
+        }
+        
+        
+        private static IEdmModel GetEdmModel()
+        {
+            ODataConventionModelBuilder builder = 
+                new ODataConventionModelBuilder();
+            builder.EntitySet<Student>("Students");
+            return builder.GetEdmModel();
         }
     }
 }

@@ -10,6 +10,7 @@ namespace performance_testing_api.Domain
             StudentId = Guid.NewGuid().ToString();
         }
 
+        [Key]
         public int Id { get; set; }
 
         [MaxLength(200)]
@@ -23,6 +24,9 @@ namespace performance_testing_api.Domain
 
         [MaxLength(200)]
         public string StudentName { get; set; }
+
+        // public  Type { get; set; }
+
 
     }
 }

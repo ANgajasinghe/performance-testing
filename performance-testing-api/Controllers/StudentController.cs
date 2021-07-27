@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
-using Detached.Mappers.EntityFramework;
-using EFCoreSecondLevelCacheInterceptor;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using performance_testing_api.ApiModel;
 using performance_testing_api.Data;
 using performance_testing_api.Domain;
 using System;
@@ -11,12 +7,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EFCoreSecondLevelCacheInterceptor;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace performance_testing_api.Controllers
 {
     [ApiController]
     [Route("api/student")]
-    public class StudentController : Controller
+    public class StudentController : ControllerBase
     {
         private readonly IMapper mapper;
 
@@ -27,50 +25,68 @@ namespace performance_testing_api.Controllers
         }
 
         public AppDbContext AppDbContext { get; }
-
-
+        
+        
+        
+        // //[HttpGet]
+        // [HttpGet]
+        // [EnableQuery(PageSize = 20)]
+        // public IActionResult Get()
+        // {
+        //     return Ok(AppDbContext.Students.Cacheable());
+        // }
+        //
+        // [HttpGet("{key}")]
+        // [EnableQuery]
+        // public IActionResult Get(int key)
+        // {
+        //     return Ok(AppDbContext.Students.FirstOrDefault(c => c.Id == key));
+        //
+        // }
+        
+        
+        
         [HttpGet]
-        public async Task<IActionResult> Get(CancellationToken cancellationToken)
+        [EnableQuery(PageSize = 20)]
+        public  IActionResult Get(CancellationToken cancellationToken)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
-
-            var res = await AppDbContext.Project<Student, StudentApiModel>(AppDbContext.Students)
-                .OrderBy(x => x.Id)
-                .Take(9999)
-                .Cacheable()
-                .ToListAsync();
-
-
-
-
-            //var res = await AppDbContext.Students
-            //    .OrderBy(x => x.Id)
-            //    .Take(9999)
-            //    .Cacheable()
-            //    .ToListAsync(cancellationToken);
-
+       
+       
+            var res = AppDbContext.Students.Cacheable().AsQueryable();
+            
+            // var res = await AppDbContext.Students
+            //     .OrderBy(x => x.Id)
+            //     .Take(20)
+            //     .Cacheable()
+            //     .ToListAsync(cancellationToken);
+            
+            // var res = await AppDbContext.Students
+            //     .Cacheable()
+            //     .ToListAsync();
+       
             Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
             return Ok(res);
-
-
+       
+       
         }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
-        {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-
-            var res = await AppDbContext.Students.Cacheable().FirstOrDefaultAsync(x => x.Id == id);
-
-            Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
-            return Ok(res);
-
-
-        }
+        
+       //
+       //  [HttpGet("{id}")]
+       //  public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
+       //  {
+       //      Stopwatch stopwatch = new Stopwatch();
+       //      stopwatch.Start();
+       //
+       //
+       //      var res = await AppDbContext.Students.Cacheable().FirstOrDefaultAsync(x => x.Id == id);
+       //
+       //      Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
+       //      return Ok(res);
+       //
+       //
+       //  }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
