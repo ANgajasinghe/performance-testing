@@ -1,14 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using performance_testing_api.Data;
 using performance_testing_api.Domain;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EFCoreSecondLevelCacheInterceptor;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace performance_testing_api.Controllers
 {
@@ -25,9 +23,9 @@ namespace performance_testing_api.Controllers
         }
 
         public AppDbContext AppDbContext { get; }
-        
-        
-        
+
+
+
         // //[HttpGet]
         // [HttpGet]
         // [EnableQuery(PageSize = 20)]
@@ -43,50 +41,50 @@ namespace performance_testing_api.Controllers
         //     return Ok(AppDbContext.Students.FirstOrDefault(c => c.Id == key));
         //
         // }
-        
-        
-        
+
+
+
         [HttpGet]
         [EnableQuery(PageSize = 20)]
-        public  IActionResult Get(CancellationToken cancellationToken)
+        public IActionResult Get(CancellationToken cancellationToken)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-       
-       
-            var res = AppDbContext.Students.Cacheable().AsQueryable();
-            
+
+
+            var res = AppDbContext.Students.AsQueryable();
+
             // var res = await AppDbContext.Students
             //     .OrderBy(x => x.Id)
             //     .Take(20)
             //     .Cacheable()
             //     .ToListAsync(cancellationToken);
-            
+
             // var res = await AppDbContext.Students
             //     .Cacheable()
             //     .ToListAsync();
-       
+
             Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
             return Ok(res);
-       
-       
+
+
         }
-        
-       //
-       //  [HttpGet("{id}")]
-       //  public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
-       //  {
-       //      Stopwatch stopwatch = new Stopwatch();
-       //      stopwatch.Start();
-       //
-       //
-       //      var res = await AppDbContext.Students.Cacheable().FirstOrDefaultAsync(x => x.Id == id);
-       //
-       //      Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
-       //      return Ok(res);
-       //
-       //
-       //  }
+
+        //
+        //  [HttpGet("{id}")]
+        //  public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
+        //  {
+        //      Stopwatch stopwatch = new Stopwatch();
+        //      stopwatch.Start();
+        //
+        //
+        //      var res = await AppDbContext.Students.Cacheable().FirstOrDefaultAsync(x => x.Id == id);
+        //
+        //      Console.WriteLine("Elapsed Time is {0} ms", stopwatch.ElapsedMilliseconds);
+        //      return Ok(res);
+        //
+        //
+        //  }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
